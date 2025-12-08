@@ -6,9 +6,10 @@ import Pagination from "./Pagination";
 import SalesCharts from "./SalesCharts"; 
 import Leaderboard from "./Leaderboard";       
 import RecentActivity from "./RecentActivity"; 
+import LoadingScreen from "./LoadingScreen"; 
 
-// IMPORT SERVICE DATABASE (Ganti CSV Service)
-import { fetchLeads, fetchLeadsStats } from "../services/leadsService.js";
+// IMPORT SERVICE DATABASE
+import { fetchLeads, fetchLeadsStats } from "../services/leadsService";
 
 export default function SalesDashboard() {
   const [query, setQuery] = useState("");
@@ -16,7 +17,7 @@ export default function SalesDashboard() {
   const [jobFilter, setJobFilter] = useState("All");
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState(null); // State untuk statistik dari DB (opsional)
+  const [stats, setStats] = useState(null);
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -25,19 +26,22 @@ export default function SalesDashboard() {
 
   // --- 1. LOAD DATA DARI DATABASE ---
   const loadData = useCallback(async () => {
-    setLoading(true);
+    if (customers.length === 0) setLoading(true);
+
     try {
       // Fetch Data Leads & Stats secara paralel
       const [leadsData, statsData] = await Promise.all([
-        fetchLeads({}), // Ambil semua data (filter dilakukan di frontend dulu biar cepat)
+        fetchLeads({}), 
         fetchLeadsStats(),
       ]);
 
+      // Safety Check: Pastikan data berupa array
+      const safeLeads = Array.isArray(leadsData) ? leadsData : [];
+
       // MAPPING: Database Columns -> Frontend Props
-      const mapped = leadsData.map((row, index) => ({
-        id: row.nasabah_id, // Primary Key dari DB
-        // Gunakan nama asli jika ada, fallback ke Prospek #...
-        name: row.name || `Prospek #${index + 1}`, 
+      const mapped = safeLeads.map((row, index) => ({
+        id: row.nasabah_id, 
+        name: row.name || `Prospek #${index + 1}`,
         age: row.age,
         job: row.job,
         marital: row.marital,
@@ -45,19 +49,18 @@ export default function SalesDashboard() {
         phone: row.phone,
         loanStatus: row.loan === 'yes' ? 'Punya pinjaman' : 'Tidak punya pinjaman',
         
-        // SCORE & PROBABILITY
-        score: Number(row.probability), 
-        probability: Number(row.probability),
+        // SCORE
+        score: Number(row.probability || 0), 
+        probability: Number(row.probability || 0),
         
-        // STATUS MAPPING (PENTING!)
-        // Asumsi di DB statusnya string: 'closing', 'failed', 'new'
+        // STATUS MAPPING (Database String -> Frontend Boolean)
         subscribed: row.status === 'closing' ? true : row.status === 'failed' ? false : null,
         
-        // TIMESTAMP & NOTES
+        // METADATA
         lastContacted: row.updated_at || null,
         notes: row.notes || "",
         
-        raw: row, // Simpan data mentah untuk kebutuhan detail
+        raw: row, 
       }));
 
       setCustomers(mapped);
@@ -65,10 +68,12 @@ export default function SalesDashboard() {
 
     } catch (err) {
       console.error("Gagal load data dari API:", err);
+      // Jangan timpa customers dengan array kosong jika error (biar data lama tetep ada kalau cuma refresh)
+      if (customers.length === 0) setCustomers([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [customers.length]); // Dependencies
 
   // Load saat pertama kali render
   useEffect(() => {
@@ -103,23 +108,18 @@ export default function SalesDashboard() {
     return filtered.slice(start, start + pageSize);
   }, [filtered, page, pageSize]);
 
-  // Hitung KPI Client Side (Bisa juga pakai stats dari DB kalau mau)
+  // KPI Calculation
   const topLeads = customers.filter((c) => c.score >= 0.7).length;
   const convRate = customers.length > 0 ? `${Math.round((topLeads / customers.length) * 100)}%` : "0%";
 
+  // TAMPILKAN LOADING SCREEN KEREN JIKA DATA MASIH KOSONG
   if (loading && customers.length === 0) {
-    return (
-      <Layout>
-        <div className="p-10 text-center text-muted animate-pulse">
-          Mengambil data dari database...
-        </div>
-      </Layout>
-    );
+    return <LoadingScreen />;
   }
 
   return (
     <Layout>
-      {/* HEADER */}
+      {/* 1. HEADER & SEARCH */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-main">Dashboard Prospek</h1>
@@ -135,20 +135,20 @@ export default function SalesDashboard() {
         </div>
       </div>
 
-      {/* KPI */}
+      {/* 2. KPI CARDS */}
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         <KPI title="Total Prospek" value={customers.length} />
         <KPI title="Prospek Hot (>=70%)" value={topLeads} />
         <KPI title="Potensi Konversi" value={convRate} />
       </div>
 
-      {/* CHARTS */}
+      {/* 3. CHARTS SECTION */}
       <SalesCharts data={filtered.length > 0 ? filtered : customers} />
 
-      {/* MAIN CONTENT */}
+      {/* 4. TABLE & FILTER SECTION */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
         
-        {/* TABEL PROSPEK */}
+        {/* Kolom Kiri: Tabel */}
         <div className="lg:col-span-3 card h-fit">
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-theme">
             <h3 className="font-bold text-main">Daftar Prospek</h3>
@@ -160,8 +160,8 @@ export default function SalesDashboard() {
           <CustomerTable 
             customers={paginated} 
             onContactSaved={() => {
-              // REFRESH DATA DARI DB SETELAH SIMPAN
-              loadData();
+              // Refresh data dari DB setelah update status
+              loadData(); 
             }} 
           />
 
@@ -175,7 +175,7 @@ export default function SalesDashboard() {
           />
         </div>
 
-        {/* FILTER SIDEBAR */}
+        {/* Kolom Kanan: Filter */}
         <aside className="card h-fit sticky top-6">
           <h3 className="font-bold text-main mb-6">Filter Data</h3>
           
@@ -218,7 +218,7 @@ export default function SalesDashboard() {
         </aside>
       </div>
 
-      {/* BOTTOM SECTION */}
+      {/* 5. BOTTOM SECTION: LEADERBOARD & ACTIVITY LOG */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Leaderboard />
         <RecentActivity />

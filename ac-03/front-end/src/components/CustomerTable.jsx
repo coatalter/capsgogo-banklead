@@ -1,35 +1,101 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom"; // IMPORT PENTING: Untuk navigasi
+import React, { useState, useMemo } from "react";
+import { Link } from "react-router-dom"; 
 import ProgressBar from "./ProgressBar";
-import { setContact, getMetadata } from "../services/contactService";
+import { updateLeadStatus } from "../services/leadsService"; 
 
 export default function CustomerTable({ customers = [], onContactSaved }) {
   const [selected, setSelected] = useState(null);
   const [subscribedChoice, setSubscribedChoice] = useState(null);
   const [notes, setNotes] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
+  // --- 1. STATE FILTER (Fitur Tambahan) ---
+  const [statusFilter, setStatusFilter] = useState("all"); 
+
+  // --- 2. LOGIC FILTERING ---
+  const filteredCustomers = useMemo(() => {
+    return customers.filter((c) => {
+      if (statusFilter === "all") return true;
+      if (statusFilter === "not_contacted") return !c.lastContacted;
+      if (statusFilter === "contacted") return c.lastContacted;
+      if (statusFilter === "closing") return c.subscribed === true;
+      if (statusFilter === "failed") return c.subscribed === false;
+      if (statusFilter === "unknown") return c.lastContacted && (c.subscribed === null || c.subscribed === undefined);
+      return true;
+    });
+  }, [customers, statusFilter]);
 
   const openContactModal = (c) => {
     setSelected(c);
-    const meta = getMetadata(c.id);
-    setSubscribedChoice(meta.subscribed);
-    setNotes(meta.notes || "");
+    setSubscribedChoice(c.subscribed); 
+    setNotes(c.notes || "");
   };
 
-  const doContact = () => {
+  const doContact = async () => {
     if (!selected) return;
+    
+    setIsSaving(true);
     try {
-      setContact(selected.id, { subscribed: subscribedChoice, notes });
-      onContactSaved && onContactSaved();
+      let statusDB = 'new'; 
+      if (subscribedChoice === true) statusDB = 'closing';
+      if (subscribedChoice === false) statusDB = 'failed';
+
+      await updateLeadStatus(selected.id, { 
+        status: statusDB, 
+        notes: notes 
+      });
+
+      if (onContactSaved) onContactSaved();
+      
       setSelected(null);
-      alert(`Data ${selected.name} berhasil disimpan.`);
     } catch (e) {
       console.error(e);
-      alert("Gagal: " + e.message);
+      alert("Gagal update ke Database: " + e.message);
+    } finally {
+      setIsSaving(false);
     }
+  };
+
+  // --- 3. HELPER BADGE STATUS ---
+  // Menggunakan Tailwind sederhana yang aman
+  const renderStatusBadge = (c) => {
+    if (!c.lastContacted) {
+      return <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">📞 Belum Dihubungi</span>;
+    }
+    if (c.subscribed === true) {
+      return <span className="badge-yes">Closing</span>; // Menggunakan class CSS Anda
+    }
+    if (c.subscribed === false) {
+      return <span className="badge-no">Menolak</span>; // Menggunakan class CSS Anda
+    }
+    return <span className="badge-unk">Follow Up</span>; // Menggunakan class CSS Anda
   };
 
   return (
     <>
+      {/* --- UI FILTER (Menggunakan class 'input-field' agar warna ikut tema) --- */}
+      <div className="flex items-center justify-between mb-4 px-1 gap-4">
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-bold text-muted uppercase">Filter:</label>
+          <select 
+            className="input-field py-1 px-3 w-auto text-sm cursor-pointer"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="all">📂 Semua Data</option>
+            <option value="not_contacted">📞 Belum Dihubungi</option>
+            <option value="contacted">✅ Sudah Dihubungi</option>
+            <option value="closing">💰 Berlangganan</option>
+            <option value="failed">⛔ Menolak</option>
+            <option value="unknown">⏳ Belum Jelas</option>
+          </select>
+        </div>
+        
+        <span className="text-xs text-muted">
+          Total: <b>{filteredCustomers.length}</b> Data
+        </span>
+      </div>
+
       <div className="table-scroll">
         <table className="w-full text-left">
           <thead>
@@ -46,15 +112,15 @@ export default function CustomerTable({ customers = [], onContactSaved }) {
             </tr>
           </thead>
           <tbody>
-            {customers.length === 0 && (
-              <tr><td colSpan={9} className="py-8 text-center text-muted italic">Tidak ada data ditemukan</td></tr>
+            {filteredCustomers.length === 0 && (
+              <tr><td colSpan={9} className="py-8 text-center text-muted italic">Tidak ada data sesuai filter</td></tr>
             )}
-            {customers.map((c) => (
+            
+            {/* Menggunakan filteredCustomers untuk looping */}
+            {filteredCustomers.map((c) => (
               <tr key={c.id}>
-                {/* ID: Warna muted (abu) */}
                 <td className="text-xs text-muted">#{c.id}</td>
                 
-                {/* NAMA: Link ke Halaman Detail (Warna Main + Hover Effect) */}
                 <td>
                   <Link 
                     to={`/sales/customer/${c.id}`} 
@@ -78,14 +144,19 @@ export default function CustomerTable({ customers = [], onContactSaved }) {
                 
                 <td>
                   {c.lastContacted ? (
-                    <span className="text-xs text-muted font-medium">{new Date(c.lastContacted).toLocaleString("id-ID", { dateStyle: 'medium', timeStyle: 'short' })}</span>
+                    <div className="flex flex-col">
+                        <span className="text-xs text-main font-bold">
+                          {new Date(c.lastContacted).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' })}
+                        </span>
+                        <span className="text-[10px] text-muted">
+                          {new Date(c.lastContacted).toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                    </div>
                   ) : <span className="text-muted opacity-50">-</span>}
                 </td>
                 
                 <td>
-                  {c.subscribed === true && <span className="badge-yes">Yes</span>}
-                  {c.subscribed === false && <span className="badge-no">No</span>}
-                  {(c.subscribed === null || c.subscribed === undefined) && <span className="badge-unk">Unknown</span>}
+                  {renderStatusBadge(c)}
                 </td>
                 
                 <td className="text-right">
@@ -102,7 +173,7 @@ export default function CustomerTable({ customers = [], onContactSaved }) {
         </table>
       </div>
 
-      {/* --- MODAL KONTAK --- */}
+      {/* --- MODAL (STRUKTUR ASLI, TIDAK AKAN RUSAK DI DARK MODE) --- */}
       {selected && (
         <div className="modal-backdrop">
           <div className="modal-panel">
@@ -136,9 +207,11 @@ export default function CustomerTable({ customers = [], onContactSaved }) {
                 </div>
               </div>
 
-              <div className="mt-8 flex justify-end gap-3 pt-5 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                <button onClick={() => setSelected(null)} className="btn btn-ghost">Batal</button>
-                <button onClick={doContact} className="btn btn-primary">Simpan Progress</button>
+              <div className="mt-8 flex justify-end gap-3 pt-5 border-t border-theme">
+                <button onClick={() => setSelected(null)} className="btn btn-ghost" disabled={isSaving}>Batal</button>
+                <button onClick={doContact} className="btn btn-primary" disabled={isSaving}>
+                  {isSaving ? "Menyimpan..." : "Simpan Progress"}
+                </button>
               </div>
             </div>
           </div>

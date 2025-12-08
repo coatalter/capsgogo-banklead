@@ -1,54 +1,102 @@
 import React, { useEffect, useState } from "react";
-import { getLogs } from "../services/contactService";
+import { fetchLogs } from "../services/leadsService"; 
 
 export default function RecentActivity() {
   const [logs, setLogs] = useState([]);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5; 
 
-  // Load logs setiap kali komponen muncul
+  const loadLogs = async () => {
+    try {
+      const data = await fetchLogs();
+      setLogs(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    setLogs(getLogs());
-    
-    // Interval check setiap 2 detik (biar kerasa realtime kalau ada tab lain update)
-    const interval = setInterval(() => {
-      setLogs(getLogs());
-    }, 2000);
-
+    loadLogs();
+    const interval = setInterval(loadLogs, 5000);
     return () => clearInterval(interval);
   }, []);
 
+  const totalPages = Math.ceil(logs.length / itemsPerPage);
+  const displayedLogs = logs.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
   return (
-    <div className="card h-full flex flex-col">
-      <h3 className="font-bold text-main mb-6">🕒 Riwayat Aktivitas</h3>
+    <div className="card h-full flex flex-col relative">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="font-bold text-main">🕒 Riwayat Aktivitas</h3>
+        <span className="text-xs text-muted bg-slate-200/50 dark:bg-slate-700/50 px-2 py-1 rounded-md">
+          Total: {logs.length}
+        </span>
+      </div>
       
-      <div className="flex-1 overflow-y-auto pr-2 space-y-5 custom-scrollbar">
+      {/* List Area */}
+      <div className="flex-1 space-y-0 min-h-[300px]">
         {logs.length === 0 && (
-          <p className="text-sm text-muted italic text-center py-10">Belum ada aktivitas tercatat.</p>
+          <div className="flex flex-col items-center justify-center py-20 opacity-50 h-full">
+            <span className="text-3xl mb-2">💤</span>
+            <p className="text-sm text-muted">Belum ada aktivitas.</p>
+          </div>
         )}
 
-        {logs.map((log, idx) => (
-          <div key={idx} className="flex gap-3 relative pb-5 last:pb-0">
-            {/* Garis Vertikal (Timeline) */}
-            {idx !== logs.length - 1 && (
-              <div className="absolute left-[15px] top-8 bottom-0 w-0.5 bg-slate-100 dark:bg-slate-700"></div>
-            )}
+        {displayedLogs.map((log, idx) => (
+          <div key={idx} className="flex gap-4 relative pb-6 last:pb-0 group">
+            {/* Timeline Line */}
+            <div className="absolute left-[14px] top-8 bottom-0 w-[2px] bg-slate-200 dark:bg-slate-700 group-last:hidden"></div>
 
-            {/* Icon Bulat */}
-            <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex-shrink-0 flex items-center justify-center border border-indigo-100 dark:border-indigo-800 z-10">
-              <span className="text-xs">⚡</span>
+            {/* Icon */}
+            <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center border-2 z-10 transition-colors
+              ${log.action.includes("Closing") 
+                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400" 
+                : "bg-slate-500/10 border-slate-500/20 text-slate-500 dark:text-slate-400"
+              }`}
+            >
+              {log.action.includes("Closing") ? "💰" : "📝"}
             </div>
 
-            {/* Konten */}
-            <div>
-              <p className="text-sm text-main">
-                <span className="font-bold">{log.user}</span> {log.action} <span className="font-bold text-indigo-600 dark:text-indigo-400">{log.target}</span>
+            {/* Content */}
+            <div className="flex-1 pt-1">
+              <p className="text-sm text-main leading-snug">
+                <span className="font-bold text-indigo-600 dark:text-indigo-400">{log.user}</span> 
+                {" "}{log.action.toLowerCase()}{" "} 
+                <span className="font-semibold text-main decoration-dotted underline underline-offset-2">{log.target}</span>
               </p>
-              <p className="text-xs text-muted mt-1">
-                {new Date(log.time).toLocaleDateString("id-ID")} • {new Date(log.time).toLocaleTimeString("id-ID", {hour: '2-digit', minute:'2-digit'})}
+              <p className="text-[11px] text-muted mt-1 font-medium">
+                {new Date(log.time).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' })} • 
+                {new Date(log.time).toLocaleTimeString("id-ID", {hour: '2-digit', minute:'2-digit'})}
               </p>
             </div>
           </div>
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+          <button 
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="text-xs font-bold text-muted hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            ← Previous
+          </button>
+          
+          <span className="text-xs font-medium text-muted">
+            Page <span className="text-main font-bold">{page}</span> of {totalPages}
+          </span>
+
+          <button   
+            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="text-xs font-bold text-muted hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            Next →  
+          </button>
+        </div>
+      )}
     </div>
   );
 }
