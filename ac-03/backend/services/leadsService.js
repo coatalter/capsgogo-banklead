@@ -2,13 +2,18 @@ const { Pool } = require('pg');
 
 class LeadsService {
   constructor() {
-    this._pool = new Pool(); 
+    this._pool = new Pool({
+      user: process.env.PGUSER,
+      host: process.env.PGHOST,
+      database: process.env.PGDATABASE,
+      password: process.env.PGPASSWORD,
+      port: process.env.PGPORT ? Number(process.env.PGPORT) : 5432,
+    }); 
   }
 
   async getLeads({ minProbability, job } = {}) {
     const params = [];
     const where = [];
-
     if (minProbability !== undefined) {
       params.push(minProbability);
       where.push(`h.predicted_score >= $${params.length}`);
@@ -112,7 +117,7 @@ class LeadsService {
       SELECT u.name, COUNT(n.nasabah_id) as deals
       FROM nasabah n
       JOIN users u ON n.sales_id = u.user_id
-      WHERE n.status = 'closing' 
+      WHERE n.status = 'success' 
       GROUP BY u.name 
       ORDER BY deals DESC 
       LIMIT 5
