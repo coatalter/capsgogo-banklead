@@ -1,203 +1,86 @@
-# React + Vite
+# 🚀 JMK Sales Dashboard - Capstone Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Accenture Capstone Badge](https://img.shields.io/badge/Accenture-Capstone%20Project-purple?style=for-the-badge&logo=accenture)
+![Cohort](https://img.shields.io/badge/Cohort-AC--03-blue?style=for-the-badge)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![NodeJS](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 
-Currently, two official plugins are available:
+> **Predictive Lead Scoring Portal for Banking Sales** > *Sistem Manajemen Hubungan Pelanggan (CRM) & Dashboard Analitik Sales Berbasis Web dengan Integrasi AI.*
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Project ini dikembangkan sebagai **Final Capstone Project** untuk program **Accenture (Cohort RB dan ML)**. Aplikasi ini dirancang untuk membantu tim sales perbankan memprioritaskan prospek (leads) dengan lebih efektif menggunakan *Machine Learning*. Sistem memprediksi probabilitas ketertarikan nasabah terhadap produk deposito berjangka dan menyajikannya dalam dashboard interaktif.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📸 Screenshots
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-
-
-
-# 🏦 Predictive Lead Scoring Portal for Banking Sales  
-**AI-Powered Prospect Prioritization System**
-
-Portal ini dirancang untuk membantu tim sales perbankan memprioritaskan prospek dengan lebih efektif menggunakan machine learning. Sistem ini melakukan prediksi probabilitas ketertarikan nasabah terhadap produk deposito berjangka, lalu menyajikannya dalam dashboard interaktif lengkap dengan filtering, visualisasi, activity logs, dan leaderboard performa sales.
+| Light Mode | Dark Mode |
+|:---:|:---:|
+| <img src="https://github.com/user-attachments/assets/facdcf42-7407-4655-8fa3-71628bf65076" width="100%" alt="Dashboard Light" /> | <img src="https://github.com/user-attachments/assets/89086cb1-dc69-4ecc-a23b-8bfc2af30609" width="100%" alt="Dashboard Dark" /> |
+| *Dashboard Interaktif* | *High Contrast Dark Mode* |
 
 ---
 
 ## 🚀 Fitur Utama
 
 ### 🎯 Lead Scoring (AI Model Integration)
-- Sistem machine learning memprediksi probabilitas nasabah berlangganan produk.
-- Data ML yang telah diproses disimpan ke PostgreSQL atau database sever.
-- Probabilitas digunakan untuk menentukan *hot leads* dan prioritas kontak.
+- **Prediksi Cerdas:** Sistem ML memprediksi probabilitas nasabah berlangganan produk.
+- **Data Integration:** Hasil prediksi disimpan dan diolah di PostgreSQL.
+- **Prioritas Kontak:** Mengidentifikasi *hot leads* (probabilitas tinggi) untuk prioritas follow-up.
 
 ### 📊 Interactive Dashboard
-- KPI: Total Prospek, Hot Leads (≥70%), Potensi Konversi.
-- Filtering lengkap: Status, Job, Probability Slider, Search, Pagination.
-- Chart:
-  - Bar Chart status konversi
-  - Pie Chart “Belum Dihubungi vs Sudah Dihubungi”
-  - Bar Chart Top 5 Job Prospek  
-- Tabel prospek dengan detail seperti status, skor, phone, catatan, dsb.
+- **KPI Real-time:** Total Prospek, Hot Leads (≥70%), dan Potensi Konversi.
+- **Smart Filtering:** Filter berdasarkan Status, Pekerjaan, Slider Probabilitas, dan Pencarian.
+- **Visualisasi Data:**
+  - Bar Chart: Status Konversi
+  - Pie Chart: Rasio "Belum Dihubungi vs Sudah Dihubungi"
+  - Bar Chart: Top 5 Pekerjaan Prospek
+- **Detail Table:** Tabel prospek lengkap dengan status, skor, nomor telepon, dan catatan.
 
-### 👥 Multi-role Capability
-- Struktur tabel sudah mendukung user roles (admin, sales).
-- Dapat ditingkatkan menjadi sistem autentikasi penuh.
+### 👥 Multi-role & Activity
+- **Role Management:** Mendukung struktur user (Admin & Sales).
+- **Leaderboard:** Menampilkan ranking performa sales.
+- **Activity Logs:** Memantau riwayat aktivitas dan progress follow-up tim.
 
-### 📈 Leaderboard & Recent Activity
-- Menampilkan aktivitas sales dan progress follow-up.
-- Memudahkan monitoring performa tim.
-
-### 🔌 REST API (Hapi.js)
-- Endpoint:
-  - `GET /leads` – Ambil seluruh prospek
-  - `GET /leads-stats` – Statistik scoring
-  - `PATCH /leads/{id}/status` – Update status prospek
-  - `GET /leaderboard` – Data ranking sales
-  - `GET /logs` – Log aktivitas
-
-### 🗄 Normalized Database Structure
-- Tabel `nasabah` (profil prospek)
-- Tabel `hasil_perhitungan_probabilitas` (skor ML)
-- Tabel `users` (sales dan admin)
-- Query backend sudah join otomatis.
+---
 
 ## 🛠️ Tech Stack
 
 ### Front-End
-- React + Vite  
-- TailwindCSS  
-- Recharts (visualization)
+- **Framework:** React + Vite
+- **Styling:** TailwindCSS
+- **Visualization:** Recharts
 
 ### Back-End
-- Node.js + Hapi.js  
-- PostgreSQL + pg  
-- RESTful API design
+- **Runtime:** Node.js
+- **Framework:** Hapi.js
+- **Database:** PostgreSQL + pg
+- **Architecture:** RESTful API
 
 ### Machine Learning
-- Model Keras/TensorFlow (.h5)  
-- Prediksi dihasilkan offline → diimport ke PostgreSQL
-
-## 📂 Struktur Proyek
-/ac-03
-│
-├── backend/
-│ ├── api/
-│ │ └── leads/
-│ │ ├── handler.js
-│ │ ├── index.js
-│ │ └── routes.js
-│ ├── services/
-│ │ └── LeadsService.js
-│ ├── server.js
-│ ├── .env
-│
-├── front-end/
-│ ├── src/
-│ │ ├── components/
-│ │ │ ├── SalesDashboard.jsx
-│ │ │ ├── SalesCharts.jsx
-│ │ │ ├── CustomerTable.jsx
-│ │ │ ├── Leaderboard.jsx
-│ │ │ └── RecentActivity.jsx
-│ │ ├── services/
-│ │ │ ├── leadsService.js
-│ │ │ └── authService.js
-│ │ ├── App.jsx
-│ │ └── main.jsx
-│ └── index.html
-│
-├── database/
-│ ├── schema.sql
-│ ├── import_csv_to_db.js
-│ └── hasil_prediksi_baru.csv
-│
-└── README.md
-
+- **Model:** Keras/TensorFlow (.h5)
+- **Workflow:** Prediksi Offline → Export CSV → Import Database
 
 ---
 
-## ⚙️ Instalasi & Menjalankan Proyek
-### 1️⃣ Clone Repository
-git clone https://github.com/coatalter/capsgogo-banklead
-cd project-name
+## 📂 Struktur Proyek
 
-# Back End Setup
-### 2️⃣ Install Dependencies
-cd backend
-npm install
-
-### 3️⃣ Tambahkan .env
-PGUSER=postgres
-PGPASSWORD=yourpassword
-PGHOST=localhost
-PGPORT=5432
-PGDATABASE=banks_leads
-
-PORT=5001
-HOST=localhost
-
-### 4️⃣ Jalankan Server Back-End
-node server.js
-(backend akan tersedia di ➡ http://localhost:5001/)
-
-## 💻 Front-End Setup
-### 5️⃣ Install Dependencies
-cd ../front-end
-npm install
-
-## 6️⃣ Jalankan Server Front-End
-npm run dev
-Frontend tersedia di:
-➡ http://localhost:5173/
-
-# 🧠 Update Data Machine Learning
-Train model → export .h5
-Gunakan script Python untuk prediksi → hasil CSV
-Import CSV ke PostgreSQL:
-\copy leads FROM 'hasil_prediksi_baru.csv' DELIMITER ',' CSV HEADER;
-
-
-## Jalankan migrasi:
-INSERT INTO nasabah ...
-INSERT INTO hasil_perhitungan_probabilitas ...
-
-Dashboard akan otomatis update.
-## 🧪 API Endpoints
-    GET /leads
-        Mengambil daftar prospek.
-
-    GET /leads-stats
-        Statistik terkait scoring.
-
-    PATCH /leads/{id}/status
-        Update status prospek.
-
-    GET /leaderboard
-        Leaderboard sales.
-
-    GET /logs
-        Aktivitas terbaru.
-
-# 📌 Status Workflow Logic
-Status	Arti
-    new:	    Belum dihubungi
-    contacted:	Sudah dihubungi
-    follow up:	Perlu tindak lanjut
-    success:	Berhasil closing
-    failed: 	Menolak / gagal
-    unknown:	Data tidak lengkap
-
-
-# 👥 Tim Pengembang
-3 Web Developers (React & Backend)
-2 Machine Learning Engineers
-
-ID Tim Capstone Project	: [A25-CS081]
-ID Use Case			: [AC-03] 
-List Anggota		: 
-(R359D5Y0284) - (Arya Bima Mohammad Heriansyah	)- (React & Back-End with AI)
-(R359D5Y1664) - (Raydamar Rizkyaka Riyadi)- (React & Back-End with AI)
-(M359D5Y1680) - (Renaldy Surya Pratama)- (Machine Learning)
-(M359D5Y1218) - (Muhammad Arifin Ilham)- (Machine Learning)
-(R359D5Y0482) - (Dicky Nugraha Hasibuan)- (React & Back-End with AI)
+```bash
+/ac-03
+│
+├── backend/
+│   ├── api/leads/          # API Handlers & Routes
+│   ├── services/           # Business Logic (LeadsService)
+│   ├── server.js           # Entry Point Backend
+│   └── .env                # Environment Variables
+│
+├── front-end/
+│   ├── src/
+│   │   ├── components/     # Dashboard, Charts, Tables
+│   │   ├── services/       # API Calls (axios/fetch)
+│   │   └── App.jsx
+│   └── index.html
+│
+└── database/
+    ├── schema.sql          # Database Structure
+    └── hasil_prediksi.csv  # Data Dummy/Hasil ML
