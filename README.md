@@ -59,6 +59,7 @@ Project ini dikembangkan sebagai **Final Capstone Project** untuk program **Acce
 
 ### Machine Learning
 - **Model:** Keras/TensorFlow (.h5)
+- **Akses Model & Data:** [📁 Google Drive Link](https://drive.google.com/drive/folders/1PBF0sbGCGrm3Z3k9XRcKmgFT72bLH9Qy)
 - **Workflow:** Prediksi Offline → Export CSV → Import Database
 
 ---
