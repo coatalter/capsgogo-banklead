@@ -18,7 +18,7 @@ Project ini dikembangkan sebagai **Final Capstone Project** untuk program **Acce
 
 | Light Mode | Dark Mode |
 |:---:|:---:|
-| <img src="[https://github.com/user-attachments/assets/facdcf42-7407-4655-8fa3-71628bf65076](https://github.com/user-attachments/assets/facdcf42-7407-4655-8fa3-71628bf65076)" width="100%" alt="Dashboard Light" /> | <img src="[https://github.com/user-attachments/assets/89086cb1-dc69-4ecc-a23b-8bfc2af30609](https://github.com/user-attachments/assets/89086cb1-dc69-4ecc-a23b-8bfc2af30609)" width="100%" alt="Dashboard Dark" /> |
+| <img src="[<img width="1900" height="936" alt="image" src="https://github.com/user-attachments/assets/e215adc0-038c-4ff6-99e1-ec5336a7e510" width="100%" alt="Dashboard Light" /> | <img src="[<img width="1904" height="935" alt="image" src="https://github.com/user-attachments/assets/13a14faf-5793-4b50-9555-0837ccb937ba" width="100%" alt="Dashboard Dark" /> |
 | *Dashboard Interaktif* | *High Contrast Dark Mode* |
 
 ---
