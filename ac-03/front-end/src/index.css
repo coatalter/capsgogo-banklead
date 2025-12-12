@@ -4,43 +4,43 @@
    1. VARIABLES & THEME CONFIG
    ========================================= */
 @layer base {
-  /* --- MODE TERANG (DEFAULT) --- */
+  /* --- MODE TERANG --- */
   :root {
     --brand-primary: #4f46e5;
     --brand-hover: #4338ca;
 
     /* Backgrounds */
-    --bg-body: #f1f5f9;         /* Abu Muda Soft */
-    --bg-card: #ffffff;         /* Putih Murni */
-    --bg-sidebar: #ffffff;      /* Putih Murni */
+    --bg-body: #e4e4e7;         /* Zinc-200 */
+    --bg-card: #f4f4f5;         /* Zinc-100 */
+    --bg-sidebar: #f4f4f5;      /* Zinc-100 */
     --bg-input: #ffffff;        /* Putih */
-    --bg-hover: #f8fafc;        /* Slate-50 */
+    --bg-hover: #e4e4e7;        /* Zinc-200 */
     
-    /* Text (Kontras Tinggi) */
-    --text-main: #0f172a;       /* Hitam Slate (Jelas) */
-    --text-muted: #64748b;      /* Abu Tua (Jelas) */
-    --text-inverse: #ffffff;    /* Putih (untuk tombol) */
+    /* Text */
+    --text-main: #18181b;       /* Zinc-900 */
+    --text-muted: #52525b;      /* Zinc-600 */
+    --text-inverse: #ffffff;    /* Putih */
     
     /* Borders */
-    --border-color: #cbd5e1;    /* Slate-300 (Tegas) */
+    --border-color: #d4d4d8;    /* Zinc-300 */
   }
 
-  /* --- MODE GELAP (OVERRIDE) --- */
+  /* --- MODE GELAP --- */
   html.dark {
     /* Backgrounds */
-    --bg-body: #0b1120;         /* Deep Blue Black */
-    --bg-card: #1e293b;         /* Slate-800 */
-    --bg-sidebar: #1e293b;      /* Slate-800 */
-    --bg-input: #111827;        /* Gray-900 (Input lebih gelap) */
-    --bg-hover: #334155;        /* Slate-700 */
+    --bg-body: #09090b;         /* Zinc-950 */
+    --bg-card: #18181b;         /* Zinc-900 */
+    --bg-sidebar: #18181b;      /* Zinc-900 */
+    --bg-input: #27272a;        /* Zinc-800 */
+    --bg-hover: #27272a;        /* Zinc-800 */
     
-    /* Text (Putih Terang) */
-    --text-main: #ffffff;       /* Putih Murni */
-    --text-muted: #cbd5e1;      /* Abu Terang */
+    /* Text */
+    --text-main: #f4f4f5;       /* Zinc-100 */
+    --text-muted: #a1a1aa;      /* Zinc-400 */
     --text-inverse: #ffffff;
     
     /* Borders */
-    --border-color: #334155;    /* Slate-700 */
+    --border-color: #27272a;    /* Zinc-800 */
   }
 
   html, body, #root { 
@@ -56,10 +56,10 @@
 }
 
 /* =========================================
-   2. UTILITY CLASSES (Untuk Hapus Hardcode di JSX)
+   2. UTILITY CLASSES (Komponen UI)
    ========================================= */
 @layer components {
-  /* Gunakan class ini di JSX agar warna ikut tema otomatis */
+  /* Helper Text Colors */
   .text-main { color: var(--text-main); }
   .text-muted { color: var(--text-muted); }
   .border-theme { border-color: var(--border-color); }
@@ -69,7 +69,6 @@
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
     color: var(--text-main);
-    
     @apply rounded-xl p-6 shadow-sm;
     transition: background-color 0.3s, border-color 0.3s;
   }
@@ -103,17 +102,15 @@
     background: linear-gradient(135deg, #c7d2fe 0%, #a5b4fc 100%);
   }
   html.dark .user-avatar {
-    @apply ring-slate-700 text-indigo-100;
+    @apply ring-zinc-700 text-indigo-100;
     background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
   }
 
-  /* --- INPUTS, SELECT, TEXTAREA (FIX GLITCH & DOUBLE ARROW) --- */
+  /* --- INPUTS, SELECT, TEXTAREA --- */
   .input-field, select, textarea {
     background-color: var(--bg-input);
     border: 1px solid var(--border-color);
     color: var(--text-main);
-    
-    /* appearance-none PENTING untuk hapus panah bawaan browser */
     @apply w-full rounded-lg px-4 py-3 text-sm shadow-sm transition-colors duration-200 appearance-none;
   }
   .input-field::placeholder, textarea::placeholder { 
@@ -122,29 +119,123 @@
   .input-field:focus, select:focus, textarea:focus { 
     @apply outline-none border-indigo-500 ring-4 ring-indigo-500/10; 
   }
-  /* Fix icon dropdown di Dark Mode */
   html.dark select { color-scheme: dark; }
 
-  /* --- BUTTONS --- */
-  .btn { @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all active:scale-[0.98]; }
-  
-  .btn-primary {
-    color: var(--text-inverse);
-    @apply shadow-md shadow-indigo-500/20;
-    background: linear-gradient(to bottom right, var(--brand-primary), var(--brand-hover));
+  /* Custom Select Arrow */
+  select.input-field {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
   }
-  .btn-primary:hover { filter: brightness(110%); @apply shadow-lg shadow-indigo-500/30; }
+
+  /* Custom Range Slider */
+  input[type=range] {
+    -webkit-appearance: none; 
+    width: 100%;
+    background: transparent;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: var(--brand-primary);
+    cursor: pointer;
+    margin-top: -7px; 
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    transition: transform 0.1s;
+  }
+  input[type=range]:active::-webkit-slider-thumb { transform: scale(1.1); }
+  input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: var(--border-color);
+    border-radius: 2px;
+  }
+
+  /* --- BUTTONS --- */
+  .btn { 
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all active:scale-[0.98] cursor-pointer; 
+  }
   
+  /* 1. BUTTON PRIMARY */
+  .btn-primary {
+    color: #ffffff;
+    background: linear-gradient(to bottom right, var(--brand-primary), var(--brand-hover));
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid transparent;
+  }
+  .btn-primary:hover { 
+    filter: brightness(110%); 
+    box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+    transform: translateY(-1px);
+  }
+  
+  /* 2. BUTTON GHOST */
   .btn-ghost {
     color: var(--text-muted);
-    @apply bg-transparent border border-transparent;
+    background-color: transparent;
+    border: 1px solid transparent;
   }
   .btn-ghost:hover {
     background-color: var(--bg-hover);
     color: var(--text-main);
     border-color: var(--border-color);
   }
-  .btn-small { @apply text-xs px-3 py-1.5 rounded-md font-medium; }
+
+  /* 3. BUTTON SOFT */
+  .btn-soft {
+    background-color: rgba(79, 70, 229, 0.08); 
+    color: var(--brand-primary);
+    border: 1px solid rgba(79, 70, 229, 0.1);
+    font-weight: 700;
+  }
+  .btn-soft:hover {
+    background-color: var(--brand-primary);
+    color: #ffffff;
+    border-color: var(--brand-primary);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    transform: translateY(-1px);
+  }
+  html.dark .btn-soft {
+    background-color: rgba(99, 102, 241, 0.15); 
+    color: #a5b4fc; 
+    border-color: rgba(99, 102, 241, 0.2);
+  }
+  html.dark .btn-soft:hover {
+    background-color: var(--brand-primary);
+    color: #ffffff;
+  }
+  
+  .btn-small { @apply text-xs px-3 py-1.5 rounded-md; }
+
+  /* 4. FILTER BUTTONS */
+  .btn-filter {
+    background-color: var(--bg-card);     
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    @apply inline-flex items-center justify-center px-5 py-2 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer select-none whitespace-nowrap;
+  }
+  .btn-filter:hover {
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+    background-color: var(--bg-hover);
+    transform: translateY(-1px);
+  }
+  .btn-filter.active {
+    background: linear-gradient(135deg, var(--brand-primary), var(--brand-hover));
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    transform: scale(1.05);
+  }
+  html.dark .btn-filter.active {
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.5);
+  }
 
   /* --- TABLES --- */
   .table-scroll { 
@@ -173,48 +264,61 @@
     @apply px-6 py-4 align-middle; 
   }
 
-  /* --- PAGINATION (FIX TOMBOL DOBEL) --- */
+  /* --- PAGINATION --- */
   .pagination-container {
     border-top: 1px solid var(--border-color);
     @apply flex flex-col md:flex-row items-center justify-between gap-4 pt-6 mt-2;
   }
-  
   .pagination-btn {
     background-color: var(--bg-input); 
     border: 1px solid var(--border-color); 
     color: var(--text-main);
     @apply w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-all hover:border-indigo-500 hover:text-indigo-600 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed;
   }
-  
   .pagination-current { 
-    /* Force warna solid biar gak dobel border */
     background-color: var(--brand-primary) !important;
     border: 1px solid var(--brand-primary) !important;
     color: white !important;
     @apply w-9 h-9 flex items-center justify-center rounded-lg text-sm font-bold shadow-md z-10;
   }
 
-  /* --- BADGES & PROGRESS BAR --- */
-  .badge-yes { 
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border shadow-sm;
-    background-color: rgba(16, 185, 129, 0.1); color: rgb(5, 150, 105); border-color: rgba(16, 185, 129, 0.2);
-  }
-  html.dark .badge-yes { background-color: rgba(16, 185, 129, 0.2); color: #6ee7b7; border-color: rgba(16, 185, 129, 0.4); }
+  /* --- BADGES --- */
+  .badge-new { background-color: rgba(59, 130, 246, 0.1); color: rgb(37, 99, 235); border: 1px solid rgba(59, 130, 246, 0.2); }
+  html.dark .badge-new { background-color: rgba(59, 130, 246, 0.2); color: #93c5fd; border-color: rgba(59, 130, 246, 0.4); }
 
-  .badge-no { 
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border shadow-sm;
-    background-color: rgba(100, 116, 139, 0.1); color: var(--text-muted); border-color: var(--border-color);
+  .badge-success { background-color: rgba(16, 185, 129, 0.1); color: rgb(5, 150, 105); border: 1px solid rgba(16, 185, 129, 0.2); }
+  html.dark .badge-success { background-color: rgba(16, 185, 129, 0.2); color: #6ee7b7; border-color: rgba(16, 185, 129, 0.4); }
+
+  .badge-failed { background-color: rgba(244, 63, 94, 0.1); color: rgb(190, 18, 60); border: 1px solid rgba(244, 63, 94, 0.2); }
+  html.dark .badge-failed { background-color: rgba(244, 63, 94, 0.2); color: #fecdd3; border-color: rgba(244, 63, 94, 0.4); }
+
+  .badge-progress { background-color: rgba(245, 158, 11, 0.1); color: rgb(217, 119, 6); border: 1px solid rgba(245, 158, 11, 0.2); }
+  html.dark .badge-progress { background-color: rgba(245, 158, 11, 0.2); color: #fcd34d; border-color: rgba(245, 158, 11, 0.4); }
+
+  .badge-new, .badge-success, .badge-failed, .badge-progress {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium shadow-sm whitespace-nowrap;
   }
-  html.dark .badge-no { background-color: rgba(255, 255, 255, 0.05); color: #cbd5e1; }
-  
-  .badge-unk { 
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border shadow-sm;
-    background-color: rgba(245, 158, 11, 0.1); color: rgb(217, 119, 6); border-color: rgba(245, 158, 11, 0.2);
-  }
-  html.dark .badge-unk { background-color: rgba(245, 158, 11, 0.2); color: #fcd34d; }
 
   .progress-track { background-color: var(--bg-hover); @apply w-full rounded-full h-2 overflow-hidden shadow-inner; }
   .progress-fill { background: linear-gradient(90deg, #6366f1, #8b5cf6); @apply h-full rounded-full transition-all duration-700 ease-out; }
+
+  /* --- CONTACT CHOICES --- */
+  .contact-choice {
+    @apply flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all text-center focus:outline-none cursor-pointer flex items-center justify-center;
+  }
+  .contact-choice.border { 
+    background-color: var(--bg-input); border: 2px solid var(--border-color); color: var(--text-muted); 
+  }
+  html.dark .contact-choice.border:hover { border-color: #6366f1; color: #fff; }
+
+  .contact-choice-success { @apply border-2 border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm; }
+  html.dark .contact-choice-success { @apply bg-emerald-900/30 text-emerald-300 border-emerald-500; }
+
+  .contact-choice-failed { @apply border-2 border-rose-500 bg-rose-50 text-rose-700 shadow-sm; }
+  html.dark .contact-choice-failed { @apply bg-rose-900/30 text-rose-300 border-rose-500; }
+
+  .contact-choice-progress { @apply border-2 border-amber-400 bg-amber-50 text-amber-700 shadow-sm; }
+  html.dark .contact-choice-progress { @apply bg-amber-900/30 text-amber-300 border-amber-500; }
 
   /* --- MODAL --- */
   .modal-backdrop {
@@ -229,25 +333,209 @@
     animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .modal-header { border-bottom: 1px solid var(--border-color); @apply p-6 flex justify-between items-start; }
-
-  /* --- CHOICES --- */
-  .contact-choice.border { 
-    background-color: var(--bg-input); border: 2px solid var(--border-color); color: var(--text-muted);
-    @apply flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all text-center focus:outline-none cursor-pointer hover:border-indigo-300;
+  
+  /* --- SCRIPT BRANCHING STYLES --- */
+  .call-script-bubble {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--brand-primary);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    @apply p-6 mb-6 rounded-xl relative transition-colors;
   }
-  html.dark .contact-choice.border:hover { border-color: #6366f1; color: #fff; }
-  
-  .contact-choice-yes { 
-    @apply flex-1 py-3 px-4 rounded-xl border-2 text-sm font-medium transition-all text-center focus:outline-none cursor-pointer border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm;
+  .call-script-text {
+    color: var(--text-main);
+    @apply text-lg leading-relaxed font-medium;
   }
-  html.dark .contact-choice-yes { @apply bg-emerald-900/30 text-emerald-300 border-emerald-500; }
   
-  .contact-choice-no { @apply flex-1 py-3 px-4 rounded-xl border-2 text-sm font-medium transition-all text-center focus:outline-none cursor-pointer border-slate-500 bg-slate-100 text-slate-700 shadow-sm; }
-  html.dark .contact-choice-no { @apply bg-slate-800 text-slate-300 border-slate-500; }
+  /* FIX: Hapus group dari @apply, tangani hover manual */
+  .call-script-btn {
+    background-color: var(--bg-hover);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    @apply w-full text-left p-4 rounded-xl transition-all flex justify-between items-center cursor-pointer mb-2;
+  }
+  .call-script-btn:hover {
+    border-color: var(--brand-primary);
+    background-color: rgba(79, 70, 229, 0.05); 
+    transform: translateX(4px);
+  }
+  .call-script-btn-label { @apply font-bold transition-colors; }
+  .call-script-btn:hover .call-script-btn-label { color: var(--brand-primary); }
   
-  .contact-choice-unk { @apply flex-1 py-3 px-4 rounded-xl border-2 text-sm font-medium transition-all text-center focus:outline-none cursor-pointer border-amber-400 bg-amber-50 text-amber-700 shadow-sm; }
-  html.dark .contact-choice-unk { @apply bg-amber-900/30 text-amber-300 border-amber-500; }
+  /* Hover effect untuk panah di dalam tombol script */
+  .call-script-btn span.text-muted {
+    transition: transform 0.2s;
+  }
+  .call-script-btn:hover span.text-muted {
+    transform: translateX(4px);
+    color: var(--brand-primary);
+  }
+  
+  .call-script-end {
+    background-color: rgba(16, 185, 129, 0.1); 
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #047857;
+    @apply text-center p-6 rounded-xl;
+  }
+  html.dark .call-script-end {
+    background-color: rgba(6, 78, 59, 0.4); 
+    color: #34d399;
+  }
+  .call-step-badge {
+    background-color: var(--bg-hover);
+    color: var(--text-muted);
+    @apply text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded;
+  }
 }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* =========================================
+   3. ANIMATIONS
+   ========================================= */
+@keyframes indeterminate { 0% { left: -50%; } 50% { left: 50%; } 100% { left: 100%; } }
+.animate-indeterminate { animation: indeterminate 1.5s infinite linear; }
+
+.animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(15px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translate3d(0, 20px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+
+
+/* =========================================
+   4. CALL INTERFACE (MODERN GLASSMORPHISM)
+   ========================================= */
+
+/* Container Utama */
+.call-window {
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.02);
+  @apply fixed bottom-6 right-6 z-[9999] w-[95vw] md:w-[900px] h-[650px] rounded-2xl flex flex-col overflow-hidden transition-all duration-300;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+html.dark .call-window {
+  background-color: rgba(24, 24, 27, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* Container Minimized */
+/* FIX: Hapus 'group' dari @apply */
+.call-window-minimized {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  @apply fixed bottom-6 right-6 z-[9999] w-80 rounded-2xl shadow-xl flex items-center justify-between p-4 cursor-pointer transition-all duration-300;
+  animation: slideUp 0.4s ease-out forwards;
+}
+.call-window-minimized:hover {
+  transform: translateY(-4px);
+  background-color: var(--bg-hover);
+}
+
+/* HEADER modern */
+.call-header {
+  background: transparent;
+  border-bottom: 1px solid var(--border-color);
+  @apply h-16 flex items-center justify-between px-6 select-none;
+}
+
+.call-avatar-lg {
+  @apply w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white text-lg shadow-lg;
+  background: linear-gradient(135deg, var(--brand-primary) 0%, #a5b4fc 100%);
+}
+
+.call-timer-pill {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  @apply px-4 py-1.5 rounded-full shadow-inner;
+}
+.call-timer-text {
+  color: var(--brand-primary);
+  @apply font-mono font-bold text-sm tracking-widest;
+}
+
+/* Layout Kolom */
+.call-col-left {
+  background-color: var(--bg-card);
+  border-right: 1px solid var(--border-color);
+  @apply w-7/12 flex flex-col relative;
+}
+.call-col-right {
+  background-color: rgba(249, 250, 251, 1);
+  @apply w-5/12 flex flex-col;
+}
+html.dark .call-col-right {
+  background-color: rgba(0, 0, 0, 0.2); 
+}
+
+/* Tabs */
+.call-tab-btn {
+  color: var(--text-muted);
+  @apply flex-1 py-4 text-[11px] font-bold uppercase tracking-widest transition-all relative opacity-70;
+}
+.call-tab-btn:hover { opacity: 1; color: var(--text-main); }
+.call-tab-btn.active { opacity: 1; color: var(--brand-primary); }
+.call-tab-btn.active::after {
+  content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
+  background-color: var(--brand-primary);
+}
+
+/* Cards Script */
+.call-card-glass {
+  background-color: var(--bg-input); 
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  @apply p-5 rounded-xl transition-all duration-200 mb-4 hover:shadow-md;
+}
+.call-card-label {
+  color: var(--brand-primary);
+  @apply text-[10px] font-extrabold uppercase mb-2 tracking-widest opacity-80;
+}
+.call-card-text {
+  color: var(--text-main);
+  @apply text-sm leading-relaxed;
+}
+
+/* Notepad */
+.call-notepad-header {
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  @apply p-4 flex justify-between items-center text-[10px] font-bold uppercase tracking-wide;
+  background-color: #fef9c3; color: #854d0e;
+}
+html.dark .call-notepad-header {
+  background-color: #422006; color: #fde047;
+}
+
+.call-textarea {
+  color: var(--text-main);
+  @apply flex-1 bg-transparent p-5 resize-none focus:outline-none font-mono text-sm leading-6;
+}
+
+/* Footer */
+.call-footer {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  background-color: #18181b; 
+  color: #ffffff;
+  border-radius: 9999px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  @apply h-16 flex items-center justify-center gap-4 px-8;
+}
+
+.btn-action { 
+  @apply py-3 rounded-xl text-white font-bold text-xs shadow transition-transform active:scale-95 flex items-center justify-center gap-2 hover:opacity-90; 
+}
+
+.control-icon { 
+  background-color: rgba(255,255,255,0.1);
+  color: #a1a1aa;
+  @apply w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-90; 
+}
+.control-icon:hover {
+  background-color: rgba(255,255,255,0.2);
+  color: #ffffff;
+}
