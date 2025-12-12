@@ -61,6 +61,7 @@ export default function SuperAdminPanel() {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchUsers();
+    // eslint-disable-next-line no-unused-vars
     } catch (err) {
       alert("Gagal menghapus user.");
     }
